@@ -1,0 +1,162 @@
+[SETTINGS]
+{
+  "Name": "Spotify Takipçi Bot",
+  "SuggestedBots": 1,
+  "MaxCPM": 0,
+  "LastModified": "2022-06-28T22:21:09.1834257+03:00",
+  "AdditionalInfo": "",
+  "RequiredPlugins": [],
+  "Author": "scripthub",
+  "Version": "1.1.2 [SB]",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [
+    {
+      "Description": "Adamın ID ?",
+      "VariableName": "ID",
+      "Id": 1728707398
+    }
+  ],
+  "CaptchaUrl": "",
+  "IsBase64": false,
+  "FilterList": [],
+  "EvaluateMathOCR": false,
+  "SecurityProtocol": 0,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "AcceptInsecureCertificates": true,
+  "DisableNotifications": false,
+  "DisableImageLoading": false,
+  "DefaultProfileDirectory": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": "",
+  "Title": "spo takipci priv",
+  "IconPath": "Icon\\svbfile.ico",
+  "LicenseSource": null,
+  "Message": null,
+  "MessageColor": "#FFFFFFFF",
+  "HitInfoFormat": "[{hit.Type}][{hit.Proxy}] {hit.Data} - [{hit.CapturedString}]",
+  "AuthorColor": "#FFFFB266",
+  "WordlistColor": "#FFB5C2E1",
+  "BotsColor": "#FFA8FFFF",
+  "CustomInputColor": "#FFD6C7C7",
+  "CPMColor": "#FFFFFFFF",
+  "ProgressColor": "#FFAD93E3",
+  "HitsColor": "#FF66FF66",
+  "CustomColor": "#FFFFB266",
+  "ToCheckColor": "#FF7FFFD4",
+  "FailsColor": "#FFFF3333",
+  "RetriesColor": "#FFFFFF99",
+  "OcrRateColor": "#FF4698FD",
+  "ProxiesColor": "#FFFFFFFF"
+}
+
+[SCRIPT]
+#NickGenerator FUNCTION RandomString "?u?l?l?l?l?l?l?l?l?u?l?l?l-?d?d?d?d?d?d?d?d?d?d?d" -> VAR "Nick" 
+
+#EmailGenerator FUNCTION RandomString "?n?n?n?n?n?n?nn?n?n?n?n?na?n?n?n?n@script.com" -> VAR "Email" 
+
+#ŞifreGenerator FUNCTION RandomString "?h?h?h?h?h?h?h?h?h?h?h?h?h" -> VAR "Şifre" 
+
+#RegisterGonder REQUEST POST "https://spclient.wg.spotify.com/signup/public/v2/account/create" 
+  CONTENT "{\"account_details\":{\"birthdate\":\"1990-01-01\",\"consent_flags\":{\"eula_agreed\":true,\"send_email\":true,\"third_party_email\":false},\"display_name\":\"<Nick>\",\"email_and_password_identifier\":{\"email\":\"<Email>\",\"password\":\"<Şifre>\"},\"gender\":1},\"callback_uri\":\"https://www.spotify.com/signup/challenge?locale=tr\",\"client_info\":{\"api_key\":\"a1e486e2729f46d6bb368d6b2bcda326\",\"app_version\":\"v2\",\"capabilities\":[1],\"installation_id\":\"dc2dbbf4-029e-4983-8d69-a30abe65b8f4\",\"platform\":\"www\"},\"tracking\":{\"creation_flow\":\"\",\"creation_point\":\"https://www.spotify.com/tr/\",\"referrer\":\"\"}}" 
+  CONTENTTYPE "application/json" 
+  HEADER "accept: */*" 
+  HEADER "accept-encoding: gzip, deflate, br" 
+  HEADER "accept-language: tr-TR,tr;q=0.9" 
+  HEADER "content-type: application/json" 
+  HEADER "origin: https://www.spotify.com" 
+  HEADER "referer: https://www.spotify.com/" 
+  HEADER "sec-fetch-dest: empty" 
+  HEADER "sec-fetch-mode: cors" 
+  HEADER "sec-fetch-site: same-site" 
+  HEADER "sec-gpc: 1" 
+  HEADER "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36" 
+
+#AnahtarKontrol KEYCHECK 
+  KEYCHAIN Retry OR 
+    KEY "error" 
+  KEYCHAIN Success OR 
+    KEY "success" 
+
+#TokenCek PARSE "<SOURCE>" JSON "login_token" -> VAR "Login Token" 
+
+#TokenUrl REQUEST GET "https://www.spotify.com/tr/signup?forward_url=https%3A%2F%2Fopen.spotify.com%2F" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#TokenCek PARSE "<SOURCE>" LR "\",\"csrfToken\":\"" "\"" -> VAR "CSRF" 
+
+#TokenUrl REQUEST POST "https://www.spotify.com/api/signup/authenticate" 
+  CONTENT "splot=<Login Token>" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "accept: */*" 
+  HEADER "accept-encoding: gzip, deflate, br" 
+  HEADER "accept-language: tr-TR,tr;q=0.9" 
+  HEADER "content-type: application/x-www-form-urlencoded" 
+  HEADER "origin: https://www.spotify.com" 
+  HEADER "referer: https://www.spotify.com/tr/signup" 
+  HEADER "sec-fetch-dest: empty" 
+  HEADER "sec-fetch-mode: cors" 
+  HEADER "sec-fetch-site: same-origin" 
+  HEADER "sec-gpc: 1" 
+  HEADER "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36" 
+  HEADER "x-csrf-token: <CSRF>" 
+
+#TokenUrl REQUEST GET "https://open.spotify.com/" 
+  
+  HEADER "accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9" 
+  HEADER "accept-encoding: gzip, deflate, br" 
+  HEADER "accept-language: tr-TR,tr;q=0.9" 
+  HEADER "sec-fetch-dest: document" 
+  HEADER "sec-fetch-mode: navigate" 
+  HEADER "sec-fetch-site: none" 
+  HEADER "sec-fetch-user: ?1" 
+  HEADER "sec-gpc: 1" 
+  HEADER "upgrade-insecure-requests: 1" 
+  HEADER "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36" 
+
+#TokenCek PARSE "<SOURCE>" LR "accessToken\":\"" "\"" -> VAR "Access Token" 
+
+#TakipçiGonder REQUEST PUT "https://api.spotify.com/v1/me/following?type=user&ids=<ID>" 
+  CONTENT "" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "accept: application/json" 
+  HEADER "accept-encoding: gzip, deflate, br" 
+  HEADER "accept-language: tr" 
+  HEADER "app-platform: WebPlayer" 
+  HEADER "authorization: Bearer <Access Token>" 
+  HEADER "origin: https://open.spotify.com" 
+  HEADER "referer: https://open.spotify.com/" 
+  HEADER "sec-fetch-dest: empty" 
+  HEADER "sec-fetch-mode: cors" 
+  HEADER "sec-fetch-site: same-site" 
+  HEADER "sec-gpc: 1" 
+  HEADER "spotify-app-version: 1.1.86.567.gf2a726b9" 
+  HEADER "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36" 
+
+#AnahtarKontrol KEYCHECK 
+  KEYCHAIN Success OR 
+    KEY "<RESPONSECODE>" Contains "204" 
+  KEYCHAIN Retry OR 
+    KEY "<RESPONSECODE>" Contains "404" 
+    KEY "<RESPONSECODE>" Contains "400" 
+
